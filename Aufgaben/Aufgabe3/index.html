@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexenkessel</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+	<script src="script.ts"></script> </script>
+</head>
+
+
+<body>
+    <header>
+        <h1>Potions with Snape</h1>
+        <p> “I can teach you how to bottle fame, brew glory, even stopp a death — if you aren’t as big a bunch of dunderheads as I usually have to teach.”</p>
+        <p> TASK: CREATE YOUR OWN POTIONS RECIPE BY FILLING OUT THE BLANKS AND GIVING PRECISE INSTRUCTIONS</p>
+        <img src="cauldron_.jpg" alt="">
+    </header>
+
+    <form>
+        <div id="form">
+            <fieldset>
+                <legend>Name </legend>
+                <input type="text" name="potion" id="potion">
+            </fieldset>
+
+            <fieldset>
+                <legend>Description</legend>
+                <textarea id="descript" name="descript" ></textarea>
+            </fieldset>
+
+            <fieldset>
+                <legend>Effect</legend>
+                <select name="effect" id="effect">
+                    <option value="empty" id="empty">Choose...</option>
+                    <option value="luck" id="strengh" price="10">Felix Felicise</option>
+                    <option value="truth" id="wisdom" price="15">Veritaserum</option>
+                    <option value="transformation" id="speed" price="20">Polyjuice Potion</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>Duration</legend>
+                <span id="timeSlider">
+                    <span>
+                        10 min
+                        <input type="range" name="time" id="time" min="10" max="60" step="10" value="10">
+                        60 min
+                    </span>
+                </span>
+            </fieldset>
+
+            <fieldset>
+                <legend>Ingredients</legend>
+                <input type="checkbox"  id="dragon skin" name="ingredient" value="dragon skin" price="20">
+                <label for="dragon">dragon skin</label>
+                <input type="text" id="amountDragon" name="amountDragon">Stk<br>
+
+                <input type="checkbox" id="witch" name="ingredient" value="knotgrass" price="15">
+                <label for="witch">knotgrass</label>
+                <input type="text" id="amountWitch" name="amountWitch">Stk<br>
+
+                <input type="checkbox" id="hair" name="ingredient" value="hair" price="18">
+                <label for="hair">hair</label>
+                <input type="text" id="amountHair" name="amountHair">Stk<br>
+            </fieldset>
+
+            <fieldset>
+                <legend>Temperature</legend>
+                <input type="number" id="temperature" name="temperature" min="-10" max="100">
+            </fieldset>
+
+            <fieldset>
+                <legend>Stir</legend>
+                <span id="stirSlider">
+                    <span>
+                        slow
+                        <input type="range" name="stir" id="stir" min="1" max="10" step="1" value="1">
+                        fast
+                    </span>
+                </span>
+            </fieldset>
+
+            <fieldset>
+                <legend>Consistency</legend>
+                <input type="radio" name="consistency" id="liquid" value="liquid" price="2">
+                <label for="liquid">liquid</label><br>
+                <input type="radio" name="consistency" id="medium" value="medium" price="1">
+                <label for="medium">medium</label><br>
+                <input type="radio" name="consistency" id="tough" value="tough" price="3">
+                <label for="tough">tough</label><br>
+            </fieldset>
+
+            <fieldset>
+                <legend>Color</legend>
+                <input type="color" name="color" id="color">
+            </fieldset>
+        </div>
+    </form>
+
+    <div id="recipe">
+        <h2>Your recipe</h2>
+        <div id="display"></div>
+    </div>
+
+</body>
+
+</html>
