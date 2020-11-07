@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cauldron</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+	<script src="script.js"></script> </script>
+</head>
+
+
+<body>
+    <header>
+        <h1>Potions with Snape</h1>
+
+    </header>
+
+    <form>
+        <div id="form">
+            <fieldset>
+                <legend>Name </legend>
+                <input type="text" name="potion" id="potion">
+            </fieldset>
+
+            <fieldset>
+                <legend>Description</legend>
+                <textarea id="description" name="description" ></textarea>
+            </fieldset>
+
+            <fieldset>
+                <legend>Effect</legend>
+                <select name="effect" id="effect">
+                    <option value="empty" id="empty">Choose...</option>
+                    <option name="effect" value="luck" id="luck" price="10">Felix Felicise</option>
+                    <option name="effect" value="truth" id="truth" price="15">Veritaserum</option>
+                    <option name="effect" value="transformation" id="transformation" price="20">Polyjuice Potion</option>
+                </select>
+                <label for="effecttime">effecttime:</label> <input type="time" value="00:01" name="effecttime" id="effecttime">
+                <button type="button" id="addeffect"> add effect</button>
+            </fieldset>
+
+           
+            <fieldset>
+
+                <legend>Ingredients</legend>
+                <form id="ingredients"></form>
+                <input list="ingredient" name="ingredient" placeholder="choose...">
+                <datalist id="ingredient">
+                    <option name="dragon skin" value="dragon skin" price="20" > dragon skin</option>
+                    <option name="knotgrass" value="knotgrass" price="15"> knotgrass</option>
+                    <option name= "hair" value="hair" price="18"> hair </option>
+                </datalist>
+                <label for="amount">amount:</label> <input type="number" value="amount" name="amount"
+                id="amount" placeholder="0">
+                <button type="button" id="addeffect"> add ingredient</button>
+
+            </fieldset>
+
+            <fieldset>
+                <legend>Temperature</legend>
+                <input type="number" id="temperature" name="temperature" min="-10" max="100">
+            </fieldset>
+
+            <fieldset>
+                <legend>Stir intensity</legend>
+                <form id="stir"></form>
+                <input list="stir" name="stir" placeholder="choose stir intensity">
+                <datalist id="stir">
+                    <option value="strong"> strong</option>
+                    <option value="medium">medium</option>
+                    <option value="gentle">gentle</option>
+                </datalist>
+                <label for="stir duration">stir duration:</label> <input type="time" value="00:01" name="stir duration">
+                <button type="button" id="add stir instruction"> add stir instruction</button>
+            </fieldset>
+        </div>
+
+    <div id="recipe">
+        <h2>Your recipe</h2>
+        <div id="display"></div>
+    </div>
+
+</body>
+
+</html>
