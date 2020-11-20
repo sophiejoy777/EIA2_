@@ -22,13 +22,30 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
 
     if (_request.url) {
         let url: Url.UrlWithParsedQuery = Url.parse(_request.url, true);
+
+        let jsonObj: any = {};
         for (let key in url.query) {
-            _response.write(key + ":" + url.query[key] + "<br/>");
+
+            if (isJson(url.query[key])) {
+                // @ts-ignore
+                jsonObj[key] = JSON.parse(url.query[key])
+            } else {
+                jsonObj[key] = url.query[key]
+            }
         }
 
-        let jsonString: string = JSON.stringify(url.query);
+        let jsonString: string = JSON.stringify(jsonObj);
         _response.write(jsonString);
     }
 
     _response.end();
+}
+
+function isJson(str:any) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
 }

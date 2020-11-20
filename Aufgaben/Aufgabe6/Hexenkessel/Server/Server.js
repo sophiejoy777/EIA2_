@@ -15,12 +15,28 @@ function handleRequest(_request, _response) {
     _response.setHeader("Access-Control-Allow-Origin", "*");
     if (_request.url) {
         let url = Url.parse(_request.url, true);
+        let jsonObj = {};
         for (let key in url.query) {
-            _response.write(key + ":" + url.query[key] + "<br/>");
+            if (isJson(url.query[key])) {
+                // @ts-ignore
+                jsonObj[key] = JSON.parse(url.query[key]);
+            }
+            else {
+                jsonObj[key] = url.query[key];
+            }
         }
-        let jsonString = JSON.stringify(url.query);
+        let jsonString = JSON.stringify(jsonObj);
         _response.write(jsonString);
     }
     _response.end();
+}
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    }
+    catch (e) {
+        return false;
+    }
+    return true;
 }
 //# sourceMappingURL=Server.js.map
