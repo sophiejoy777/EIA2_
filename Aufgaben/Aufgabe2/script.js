@@ -1,18 +1,22 @@
+"use strict";
 ////////////////////////////////////////////////////////// SOPHIE CAMPBELL EIA1 //////////////////////////////////////////////////////////
-//------------------------------------------- Karten Arrays ------------------------------------------------//
-var playerHandArray = [];
-var compHandArray = [];
-var deckArray = [];
-var discardPileArray = [];
-//------------------------------------------- Zusätzliche Variablen -------------------------------------------//
-var playersTurn = true; // Gibt an ob der Player am Zug ist.
-var compHandVisible = false; // Gibt an ob die Karten des Computers sichtbar sind.
-//------------------------------------------- Onload -------------------------------------------//
+let CompKarteSichtbar = false; // Sichtbarkeit der Karten des Computers
+let SpielerZug = true; // Anzeige ob Zug des Players
+/*
+* Karten Array
+*/
+let SpielerZugArray = [];
+let CompKarteArray = [];
+let DeckArray = [];
+let discardPileArray = [];
+/*
+* Onload
+*/
 window.onload = function () {
-    // Zwei Eventlistener um die Spielregeln anzuzeigen/auszublenden.
+    // Eventlistener um footer anzuzeigen/auszublenden
     document.getElementById("rulesButton").addEventListener('click', function () { switchOverlay(false); }, false);
     document.getElementById("overlay").addEventListener('click', function () { switchOverlay(true); }, false);
-    document.getElementById("topDeckCard").addEventListener('click', function () { drawCard(playersTurn); }, false);
+    document.getElementById("topDeckCard").addEventListener('click', function () { drawCard(SpielerZug); }, false);
     // Zu Beginn wird das Deck erzeugt, gemischt, Karten ausgeteilt, und das HTML erstellt.
     generateNewDeck();
     shuffleDeck();
@@ -20,247 +24,245 @@ window.onload = function () {
     updateHTML();
     console.log("****************************************");
 };
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////// SETUP-FUNKTIONEN ///////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//---------------------------------------- Generiert alle Karten und schreibt sie ins deckArray ----------------------------------------//
+/*
+* Set Up
+*/
 function generateNewDeck() {
-    var newCardValue;
-    var newCardColor;
-    var newSpecialProperty = "none";
-    // Schleifen die Karten mit den Werten 1-9, in vier verschiedenen Farben erzeugen.
-    for (var i = 1; i <= 9; i++) {
-        for (var j = 0; j < 4; j++) {
-            newCardValue = i;
+    let newkartenwert;
+    let newKartenFarbe;
+    let newspezialfunktion = "none";
+    for (let i = 1; i <= 9; i++) { // Schleifen die Karten mit den Werten 1-9, in vier verschiedenen Farben erzeugen
+        for (let j = 0; j < 4; j++) {
+            newkartenwert = i;
             switch (j) {
                 case 0:
-                    newCardColor = "red";
+                    newKartenFarbe = "red";
                     break;
                 case 1:
-                    newCardColor = "blue";
+                    newKartenFarbe = "blue";
                     break;
                 case 2:
-                    newCardColor = "yellow";
+                    newKartenFarbe = "yellow";
                     break;
                 case 3:
-                    newCardColor = "green";
+                    newKartenFarbe = "green";
                     break;
             }
-            var newCard = {
-                specialProperty: "none",
-                cardValue: newCardValue,
-                cardColor: newCardColor
+            let newCard = {
+                spezialfunktion: "none",
+                kartenwert: newkartenwert,
+                KartenFarbe: newKartenFarbe
             };
-            deckArray.push(newCard);
+            DeckArray.push(newCard);
         }
     }
-    // Schleife die 4 Sonderkarten (zwei mal "+4", zwei mal "+2") erzeugt.
-    for (var k = 0; k < 4; k++) {
+    for (let k = 0; k < 4; k++) { // Schleife die 4 Sonderkarten erzeugt
         switch (k) {
             case 0:
             case 1:
-                newSpecialProperty = "Plus 2";
+                newspezialfunktion = "Plus 2";
                 break;
             case 2:
             case 3:
-                newSpecialProperty = "Plus 4";
+                newspezialfunktion = "Plus 4";
                 break;
         }
-        var newCard = {
-            specialProperty: newSpecialProperty,
-            cardValue: 0,
-            cardColor: "allColors"
+        let newCard = {
+            spezialfunktion: newspezialfunktion,
+            kartenwert: 0,
+            KartenFarbe: "allColors"
         };
-        deckArray.push(newCard);
+        DeckArray.push(newCard);
     }
     console.log("Neues Deck wurde generiert.");
 }
-//---------------------------------------- Mischt das Deck ----------------------------------------//
+/*
+* Deck wird gemischt
+*/
 function shuffleDeck() {
-    deckArray.sort(function (a, b) {
-        return 0.5 - Math.random(); // gibt der .sort Methode eine zufällig positive oder negative Zahl.
+    DeckArray.sort(function (a, b) {
+        return 0.5 - Math.random(); // gibt der .sort Methode eine zufällig positive oder negative Zahl
     });
     console.log('Das Deck wurde gemischt.');
-    console.log(deckArray);
+    console.log(DeckArray);
 }
-//---------------------------------------- Teilt beiden Spielern 7 Karten aus und legt eine Karte auf den Ablagestapel ----------------------------------------//
+/*
+* 7 Karten werden ausgeteilt. Eine Karte wird auf den Ablagestapel gelegt
+*/
 function dealCards() {
-    for (var i = 0; i < 7; i++) {
-        compHandArray.push(deckArray[0]);
-        deckArray.splice(0, 1);
-        playerHandArray.push(deckArray[0]);
-        deckArray.splice(0, 1);
+    for (let i = 0; i < 7; i++) {
+        CompKarteArray.push(DeckArray[0]);
+        DeckArray.splice(0, 1);
+        SpielerZugArray.push(DeckArray[0]);
+        DeckArray.splice(0, 1);
     }
-    discardPileArray.push(deckArray[0]);
-    deckArray.splice(0, 1);
+    discardPileArray.push(DeckArray[0]);
+    DeckArray.splice(0, 1);
     console.log('Karten wurden ausgeteilt.');
-    console.log(compHandArray);
-    console.log(playerHandArray);
-    console.log(deckArray);
+    console.log(CompKarteArray);
+    console.log(SpielerZugArray);
+    console.log(DeckArray);
     console.log(discardPileArray);
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////// HTML-FUNKTIONEN ///////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//---------------------------------------- Erzeugt das HTML einer Karte der Player-Hand ----------------------------------------//
+/*
+* HTML Funktionen
+*/
+// Erzeugt das HTML einer Karte der Player-Hand //
 // Parameter= Kartennummer
 function generatePlayerHandHTML(CardNr) {
-    // Erstellen des Karten-<div> mit Eventlistener.
-    var cardDiv = document.createElement("div");
+    let cardDiv = document.createElement("div"); // Eventlistener erstellt Karten Div        
     cardDiv.setAttribute("id", "playerCard" + (CardNr + 1));
     cardDiv.setAttribute("class", "card");
-    cardDiv.addEventListener('click', function () { playCard(CardNr, playersTurn); }, false);
+    cardDiv.addEventListener('click', function () { playCard(CardNr, SpielerZug); }, false);
     document.getElementById("playerHand").appendChild(cardDiv);
-    // Ermitteln was auf der Karte stehen soll.
-    var tempCardValue = playerHandArray[CardNr].cardValue + "";
-    switch (playerHandArray[CardNr].specialProperty) {
+    let tempkartenwert = SpielerZugArray[CardNr].kartenwert + ""; // Inhalt der Karte wird erstellt
+    switch (SpielerZugArray[CardNr].spezialfunktion) {
         case "Plus 2":
-            tempCardValue = "+2";
+            tempkartenwert = "+2";
             break;
         case "Plus 4":
-            tempCardValue = "+4";
+            tempkartenwert = "+4";
             break;
     }
-    // Erstellen der <p>-Tags mit dem Inhalt in gewollter Farbe.
-    var cardValueP1 = document.createElement("p");
-    cardValueP1.innerHTML = tempCardValue + "";
-    cardValueP1.setAttribute("class", playerHandArray[CardNr].cardColor);
-    cardDiv.appendChild(cardValueP1);
-    var cardValueP2 = document.createElement("p");
-    cardValueP2.innerHTML = tempCardValue + "";
-    cardValueP2.setAttribute("class", playerHandArray[CardNr].cardColor);
-    cardDiv.appendChild(cardValueP2);
+    let kartenwertP1 = document.createElement("p"); // Erstellen der <p>-Tags mit dem Inhalt in gewollter Farbe           
+    kartenwertP1.innerHTML = tempkartenwert + "";
+    kartenwertP1.setAttribute("class", SpielerZugArray[CardNr].KartenFarbe);
+    cardDiv.appendChild(kartenwertP1);
+    let kartenwertP2 = document.createElement("p");
+    kartenwertP2.innerHTML = tempkartenwert + "";
+    kartenwertP2.setAttribute("class", SpielerZugArray[CardNr].KartenFarbe);
+    cardDiv.appendChild(kartenwertP2);
 }
-//---------------------------------------- Erzeugt das HTML einer Karte der Computer-Hand ----------------------------------------//
+// Erzeugt das HTML einer Karte der Player-Hand //
 // Parameter= Kartennummer
 function generateCompHandHTML(CardNr) {
-    if (!compHandVisible) { // Falls die Karten verdeckt sind.
-        var cardDiv = document.createElement("div");
+    if (!CompKarteSichtbar) { // Falls die Karten verdeckt sind
+        let cardDiv = document.createElement("div");
         cardDiv.setAttribute("id", "compCard" + (CardNr + 1));
         cardDiv.setAttribute("class", "hiddenCard");
         document.getElementById("compHand").appendChild(cardDiv);
     }
-    else { // Falls die Karten sichtbar sind.
-        // Erstellen des Karten-<div> mit Eventlistener.
-        var cardDiv = document.createElement("div");
+    else { // Falls die Karten sichtbar sind
+        let cardDiv = document.createElement("div"); // Eventlistener erstellt Karten Div                   
         cardDiv.setAttribute("id", "compCard" + (CardNr + 1));
         cardDiv.setAttribute("class", "card");
         document.getElementById("compHand").appendChild(cardDiv);
-        // Ermitteln was auf der Karte stehen soll.
-        var tempCardValue = compHandArray[CardNr].cardValue + "";
-        switch (compHandArray[CardNr].specialProperty) {
+        let tempkartenwert = CompKarteArray[CardNr].kartenwert + ""; // Inhalt der Karte wird erstellt
+        switch (CompKarteArray[CardNr].spezialfunktion) {
             case "Plus 2":
-                tempCardValue = "+2";
+                tempkartenwert = "+2";
                 break;
             case "Plus 4":
-                tempCardValue = "+4";
+                tempkartenwert = "+4";
                 break;
         }
-        // Erstellen der <p>-Tags mit dem Inhalt in gewollter Farbe.
-        var cardValueP1 = document.createElement("p");
-        cardValueP1.innerHTML = tempCardValue + "";
-        cardValueP1.setAttribute("class", compHandArray[CardNr].cardColor);
-        cardDiv.appendChild(cardValueP1);
-        var cardValueP2 = document.createElement("p");
-        cardValueP2.innerHTML = tempCardValue + "";
-        cardValueP2.setAttribute("class", compHandArray[CardNr].cardColor);
-        cardDiv.appendChild(cardValueP2);
+        let kartenwertP1 = document.createElement("p"); // Erstellen der <p>-Tags mit dem Inhalt in gewollter Farbe              
+        kartenwertP1.innerHTML = tempkartenwert + "";
+        kartenwertP1.setAttribute("class", CompKarteArray[CardNr].KartenFarbe);
+        cardDiv.appendChild(kartenwertP1);
+        let kartenwertP2 = document.createElement("p");
+        kartenwertP2.innerHTML = tempkartenwert + "";
+        kartenwertP2.setAttribute("class", CompKarteArray[CardNr].KartenFarbe);
+        cardDiv.appendChild(kartenwertP2);
     }
 }
-//---------------------------------------- Erzeugt das HTML einer Karte des Ablage-Stapels ----------------------------------------//
+// Erzeugt das HTML einer Karte des Ablagestapels //
 // Parameter= Kartennummer
 function generateDiscardPileHTML(CardNr) {
-    // Erstellen des Karten-<div>.
-    var cardDiv = document.createElement("div");
+    let cardDiv = document.createElement("div"); // Eventlistener erstellt Karten Div               
     cardDiv.setAttribute("id", "discardPile" + (CardNr + 1));
     cardDiv.setAttribute("class", "card");
     cardDiv.style.left = 30 + (CardNr * 0.5) + "%"; // Jede neue Karte wird leicht nach rechts Verschoben.
     cardDiv.style.transform = "rotate(" + (Math.random() * 31 - 20) + "deg)"; // Karten bekommen eine zufällige Rotation, um einen hingeworfenen Kartenstapel zu simulieren.
     document.getElementById("playArea").appendChild(cardDiv);
-    // Ermitteln was auf der Karte stehen soll.
-    var tempCardValue = discardPileArray[CardNr].cardValue + "";
-    switch (discardPileArray[CardNr].specialProperty) {
+    let tempkartenwert = discardPileArray[CardNr].kartenwert + ""; // Inhalt der Karte wird erstellt
+    switch (discardPileArray[CardNr].spezialfunktion) {
         case "Plus 2":
-            tempCardValue = "+2";
+            tempkartenwert = "+2";
             break;
         case "Plus 4":
-            tempCardValue = "+4";
+            tempkartenwert = "+4";
             break;
     }
-    // Erstellen der <p>-Tags mit dem Inhalt in gewollter Farbe.
-    var cardValueP1 = document.createElement("p");
-    cardValueP1.innerHTML = tempCardValue + "";
-    cardValueP1.setAttribute("class", discardPileArray[CardNr].cardColor);
-    cardDiv.appendChild(cardValueP1);
-    var cardValueP2 = document.createElement("p");
-    cardValueP2.innerHTML = tempCardValue + "";
-    cardValueP2.setAttribute("class", discardPileArray[CardNr].cardColor);
-    cardDiv.appendChild(cardValueP2);
+    let kartenwertP1 = document.createElement("p"); // Erstellen der <p>-Tags mit dem Inhalt in gewollter Farbe                
+    kartenwertP1.innerHTML = tempkartenwert + "";
+    kartenwertP1.setAttribute("class", discardPileArray[CardNr].KartenFarbe);
+    cardDiv.appendChild(kartenwertP1);
+    let kartenwertP2 = document.createElement("p");
+    kartenwertP2.innerHTML = tempkartenwert + "";
+    kartenwertP2.setAttribute("class", discardPileArray[CardNr].KartenFarbe);
+    cardDiv.appendChild(kartenwertP2);
 }
-//---------------------------------------- Ruft die HTML-Funktionen auf bis alle Karten dargestellt werden ----------------------------------------//
+/*
+*Ruft die HTML-Funktionen auf bis alle Karten dargestellt werden
+*/
 function generateAllHTML() {
-    for (var i = 0; i < compHandArray.length; i++) {
+    for (let i = 0; i < CompKarteArray.length; i++) {
         generateCompHandHTML(i);
     }
-    for (var j = 0; j < playerHandArray.length; j++) {
+    for (let j = 0; j < SpielerZugArray.length; j++) {
         generatePlayerHandHTML(j);
     }
-    for (var k = 0; k < discardPileArray.length; k++) {
+    for (let k = 0; k < discardPileArray.length; k++) {
         generateDiscardPileHTML(k);
     }
 }
-//---------------------------------------- Löscht alle erzeugten HTML-Elemente ----------------------------------------//
+/*
+* Löscht alle erzeugten HTML-Elemente
+*/
 function clearAllHTML() {
-    // Lösche alle HTML-Elemente der Player-Hand.
-    var divToEmpty = document.getElementById("playerHand");
-    var children = divToEmpty.children;
-    var childCount = children.length;
-    for (var i = 0; i < childCount; i++) {
+    // Alle HTML-Elemente der Player-Hand werden gelöscht
+    let divToEmpty = document.getElementById("playerHand");
+    let children = divToEmpty.children;
+    let childCount = children.length;
+    for (let i = 0; i < childCount; i++) {
         if (divToEmpty.firstElementChild != null)
             divToEmpty.removeChild(divToEmpty.firstElementChild);
     }
-    // Lösche alle HTML-Elemente der Computer-Hand.
+    // Alle HTML-Elemente der Computer-Hand werden gelöscht
     divToEmpty = document.getElementById("compHand");
     children = divToEmpty.children;
     childCount = children.length;
-    for (var i = 0; i < childCount; i++) {
+    for (let i = 0; i < childCount; i++) {
         if (divToEmpty.firstElementChild != null)
             divToEmpty.removeChild(divToEmpty.firstElementChild);
     }
-    // Lösche alle HTML-Elemente des Ablage-Stapels.
+    // Alle HTML-Elemente des Ablage-Stapels werden gelöscht
     divToEmpty = document.getElementById("playArea");
     children = divToEmpty.children;
     childCount = children.length;
-    for (var i = 0; i < childCount; i++) {
+    for (let i = 0; i < childCount; i++) {
         if (divToEmpty.firstElementChild != null)
             divToEmpty.removeChild(divToEmpty.firstElementChild);
     }
 }
-//---------------------------------------- Refreshe das komplette HTML ----------------------------------------//
+/*
+* Refreshe das komplette HTML
+*/
 function updateHTML() {
     clearAllHTML();
     generateAllHTML();
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////// FUNKTIONEN FÜR DEN SPIELABLAUF ///////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//---------------------------------------- Spiele die gecklickte Karte falls es gültig ist ----------------------------------------//
-// Parameter1 = Kartennummer | Parameter2 = Welcher Spieler möchte eine Karte spielen 
-function playCard(playedCardNr, tempPlayersTurn) {
-    if (tempPlayersTurn == true) { //Falls der Player eine Karte spielen will.
-        if ((playerHandArray[playedCardNr].cardValue == discardPileArray[discardPileArray.length - 1].cardValue) || // Gleicher Wert?
-            (playerHandArray[playedCardNr].cardColor == discardPileArray[discardPileArray.length - 1].cardColor) || // Gleiche Farbe?
-            (discardPileArray[discardPileArray.length - 1].specialProperty != "none") || // Zuletzt gelegte Karte ist eine Sonderkarte?
-            (playerHandArray[playedCardNr].specialProperty != "none")) { // Geklickte Karte ist eine Sonderkarte?
+/*
+* Funktionen für Spielablauf
+*/
+// Parameter1 = Kartennummer 
+// Parameter2 = Welcher Spieler möchte eine Karte spielen 
+function playCard(playedCardNr, tempSpielerZug) {
+    if (tempSpielerZug == true) { //Falls der Player eine Karte spielen will.
+        if ((SpielerZugArray[playedCardNr].kartenwert == discardPileArray[discardPileArray.length - 1].kartenwert) || // Gleicher Wert?
+            (SpielerZugArray[playedCardNr].KartenFarbe == discardPileArray[discardPileArray.length - 1].KartenFarbe) || // Gleiche Farbe?
+            (discardPileArray[discardPileArray.length - 1].spezialfunktion != "none") || // Zuletzt gelegte Karte ist eine Sonderkarte?
+            (SpielerZugArray[playedCardNr].spezialfunktion != "none")) { // Geklickte Karte ist eine Sonderkarte?
             // Karte wird gespielt.
-            discardPileArray.push(playerHandArray[playedCardNr]);
-            playerHandArray.splice(playedCardNr, 1);
-            console.log('Player hat Karte: "' + discardPileArray[discardPileArray.length - 1].cardValue + " " + discardPileArray[discardPileArray.length - 1].cardColor + '" gespielt.');
+            discardPileArray.push(SpielerZugArray[playedCardNr]);
+            SpielerZugArray.splice(playedCardNr, 1);
+            console.log('Player hat Karte: "' + discardPileArray[discardPileArray.length - 1].kartenwert + " " + discardPileArray[discardPileArray.length - 1].KartenFarbe + '" gespielt.');
             updateHTML();
             //Sonderfunktion wird ausgeführt
-            useSpecialProperty(discardPileArray[discardPileArray.length - 1], playersTurn);
+            usespezialfunktion(discardPileArray[discardPileArray.length - 1], SpielerZug);
             // Falls der Player keine Karten mehr auf der Hand hat, beende das Spiel.
-            if (playerHandArray.length < 1) {
+            if (SpielerZugArray.length < 1) {
                 endGame(true);
             }
             // Sonst ist der Computer dran. + Kleine Zeitverzögerung, zum besseren Verständniss des Spielablaufs.
@@ -273,24 +275,24 @@ function playCard(playedCardNr, tempPlayersTurn) {
         }
     }
     else { // Falls der Computer eine Karte spielen will.
-        if ((compHandArray[playedCardNr].cardValue == discardPileArray[discardPileArray.length - 1].cardValue) ||
-            (compHandArray[playedCardNr].cardColor == discardPileArray[discardPileArray.length - 1].cardColor) ||
-            (discardPileArray[discardPileArray.length - 1].specialProperty != "none") ||
-            (compHandArray[playedCardNr].specialProperty != "none")) {
+        if ((CompKarteArray[playedCardNr].kartenwert == discardPileArray[discardPileArray.length - 1].kartenwert) ||
+            (CompKarteArray[playedCardNr].KartenFarbe == discardPileArray[discardPileArray.length - 1].KartenFarbe) ||
+            (discardPileArray[discardPileArray.length - 1].spezialfunktion != "none") ||
+            (CompKarteArray[playedCardNr].spezialfunktion != "none")) {
             // Karte wird gespielt.
-            discardPileArray.push(compHandArray[playedCardNr]);
-            compHandArray.splice(playedCardNr, 1);
-            console.log('Computer hat Karte: "' + discardPileArray[discardPileArray.length - 1].cardValue + " " + discardPileArray[discardPileArray.length - 1].cardColor + '" gespielt.');
+            discardPileArray.push(CompKarteArray[playedCardNr]);
+            CompKarteArray.splice(playedCardNr, 1);
+            console.log('Computer hat Karte: "' + discardPileArray[discardPileArray.length - 1].kartenwert + " " + discardPileArray[discardPileArray.length - 1].KartenFarbe + '" gespielt.');
             updateHTML();
             //Sonderfunktion wird ausgeführt
-            useSpecialProperty(discardPileArray[discardPileArray.length - 1], playersTurn);
+            usespezialfunktion(discardPileArray[discardPileArray.length - 1], SpielerZug);
             // Falls der Computer keine Karten mehr auf der Hand hat, beende das Spiel.
-            if (compHandArray.length < 1) {
+            if (CompKarteArray.length < 1) {
                 endGame(false);
             }
             // Sonst ist der Player dran.
             else {
-                playersTurn = true;
+                SpielerZug = true;
             }
         }
         else {
@@ -298,87 +300,53 @@ function playCard(playedCardNr, tempPlayersTurn) {
         }
     }
 }
-//---------------------------------------- Ziehe eine Karte ----------------------------------------//
 // Parameter = Welcher Spieler möchte eine Karte ziehen
-function drawCard(tempPlayersTurn) {
-    // Falls das Deck leer ist wird der Ablagestapel zum neuen Deck.
-    if (deckArray.length < 1) {
+function drawCard(tempSpielerZug) {
+    if (DeckArray.length < 1) { // Falls das Deck leer ist wird der Ablagestapel zum neuen Deck.
         refillDeck();
     }
-    // Der Spieler der am Zug ist, zieht eine Karte. Dann ist der Andere am Zug.
-    if (tempPlayersTurn == true) {
-        playerHandArray.push(deckArray[0]);
-        deckArray.splice(0, 1);
-        console.log('Spieler hat Karte: "' + playerHandArray[playerHandArray.length - 1].cardValue + " " + playerHandArray[playerHandArray.length - 1].cardColor + '" gezogen.');
+    if (tempSpielerZug == true) { // Der Spieler der am Zug ist, zieht eine Karte. Dann ist der Andere am Zug.       
+        SpielerZugArray.push(DeckArray[0]);
+        DeckArray.splice(0, 1);
+        console.log('Spieler hat Karte: "' + SpielerZugArray[SpielerZugArray.length - 1].kartenwert + " " + SpielerZugArray[SpielerZugArray.length - 1].KartenFarbe + '" gezogen.');
         updateHTML();
         setTimeout(computersTurn, 350);
     }
     else {
-        compHandArray.push(deckArray[0]);
-        deckArray.splice(0, 1);
-        console.log('Computer hat Karte: "' + compHandArray[compHandArray.length - 1].cardValue + " " + compHandArray[compHandArray.length - 1].cardColor + '" gezogen.');
+        CompKarteArray.push(DeckArray[0]);
+        DeckArray.splice(0, 1);
+        console.log('Computer hat Karte: "' + CompKarteArray[CompKarteArray.length - 1].kartenwert + " " + CompKarteArray[CompKarteArray.length - 1].KartenFarbe + '" gezogen.');
         updateHTML();
-        playersTurn = true;
+        SpielerZug = true;
     }
 }
-//---------------------------------------- Der Spielzug des Computers ----------------------------------------//
+/*
+*Spielzug des Computers
+*/
 function computersTurn() {
     console.log("****************************************");
-    playersTurn = false;
-    // Jede Karte auf der Computer-Hand wird zu spielen versucht.
-    for (var i = 0; (i < compHandArray.length) && (playersTurn == false); i++) {
-        playCard(i, playersTurn);
+    SpielerZug = false;
+    // Jede Karte wird versucht zu spielen
+    for (let i = 0; (i < CompKarteArray.length) && (SpielerZug == false); i++) {
+        playCard(i, SpielerZug);
     }
-    // Falls keine Karte gespielt wurde und der Computer immernoch am Zug ist, zieht er eine Karte.
-    if (playersTurn == false) {
-        drawCard(playersTurn);
+    // Falls keine Karte gespielt wurde und der Computer immernoch am Zug ist, zieht er eine Karte
+    if (SpielerZug == false) {
+        drawCard(SpielerZug);
     }
-    playersTurn = true;
+    SpielerZug = true;
     console.log("****************************************");
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////// ZUSATZ-FUNKTIONEN ///////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//---------------------------------------- Das Spiel wird beendet und ein neues Spiel wird begonnen ----------------------------------------//
-// Parameter= Wurde das Spiel gewonnen oder Verloren
-function endGame(wonTheGame) {
-    console.log('Spiel wurde beendet.');
-    // Ein Alert ausgegeben, je nachdem ob gewonnen oder verloren wurde.
-    if (wonTheGame) {
-        alert("!!!!! GLÜCKWUNSCH !!!!!\n!!!!! DU HAST GEWONNEN !!!!!\n\nNochmal spielen?");
-    }
-    else {
-        alert("Du hast leider verloren.\n\nNochmal spielen?");
-    }
-    // Leere alle Arrays und Starte eine neue Runde.
-    while (compHandArray.length > 0) {
-        compHandArray.pop();
-    }
-    while (playerHandArray.length > 0) {
-        playerHandArray.pop();
-    }
-    while (deckArray.length > 0) {
-        deckArray.pop();
-    }
-    while (discardPileArray.length > 0) {
-        discardPileArray.pop();
-    }
-    console.log('Arrays wurden geleert.');
-    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-    generateNewDeck();
-    shuffleDeck();
-    dealCards();
-    updateHTML();
-    playersTurn = true;
-}
-//---------------------------------------- Der Ablagestapel wird zum Deck, dann wird das Deck gemischt ----------------------------------------//
+/*
+* Der Ablagestapel wird zum Deck, dann wird das Deck gemischt
+*/
 function refillDeck() {
     // Zwischenspeichern der obersten Karte des Ablagestapels.
-    var topCard = discardPileArray[discardPileArray.length - 1];
+    let topCard = discardPileArray[discardPileArray.length - 1];
     discardPileArray.pop();
     // Alle Karten des Ablagestapels werden in das Deck geschrieben und dann aus dem Ablagestapel gelöscht.
     while (discardPileArray.length > 0) {
-        deckArray.push(discardPileArray[discardPileArray.length - 1]);
+        DeckArray.push(discardPileArray[discardPileArray.length - 1]);
         discardPileArray.pop();
     }
     discardPileArray.push(topCard);
@@ -386,54 +354,54 @@ function refillDeck() {
     shuffleDeck();
     updateHTML();
 }
-//---------------------------------------- Die Sonderfunktion einer Karte wird benutzt ----------------------------------------//
+// Funktion der Sonderkarte tritte ein
 // Parameter1= Die Karte die genutzt wird | Parameter2= Welcher Spieler ist am Zug
-function useSpecialProperty(tempCard, tempPlayersTurn) {
-    if (tempPlayersTurn) { // Wenn der Player am Zug ist.
-        switch (tempCard.specialProperty) {
+function usespezialfunktion(tempCard, tempSpielerZug) {
+    if (tempSpielerZug) { // Wenn der Player am Zug ist.
+        switch (tempCard.spezialfunktion) {
             // Bei "Plus 2" zieht der Computer 2 Karten.
             case "Plus 2":
-                for (var i = 0; i < 2; i++) {
-                    if (deckArray.length < 1) {
+                for (let i = 0; i < 2; i++) {
+                    if (DeckArray.length < 1) {
                         refillDeck();
                     }
-                    compHandArray.push(deckArray[0]);
-                    deckArray.splice(0, 1);
+                    CompKarteArray.push(DeckArray[0]);
+                    DeckArray.splice(0, 1);
                 }
                 console.log('Computer musste 2 Karten ziehen.');
                 break;
             // Bei "Plus 4" zieht der Computer 4 Karten.
             case "Plus 4":
-                for (var i = 0; i < 4; i++) {
-                    if (deckArray.length < 1) {
+                for (let i = 0; i < 4; i++) {
+                    if (DeckArray.length < 1) {
                         refillDeck();
                     }
-                    compHandArray.push(deckArray[0]);
-                    deckArray.splice(0, 1);
+                    CompKarteArray.push(DeckArray[0]);
+                    DeckArray.splice(0, 1);
                 }
                 console.log('Computer musste 4 Karten ziehen.');
                 break;
         }
     }
     else { // Wenn der Computer am Zug ist.
-        switch (tempCard.specialProperty) {
+        switch (tempCard.spezialfunktion) {
             case "Plus 2":
-                for (var i = 0; i < 2; i++) {
-                    if (deckArray.length < 1) {
+                for (let i = 0; i < 2; i++) {
+                    if (DeckArray.length < 1) {
                         refillDeck();
                     }
-                    playerHandArray.push(deckArray[0]);
-                    deckArray.splice(0, 1);
+                    SpielerZugArray.push(DeckArray[0]);
+                    DeckArray.splice(0, 1);
                 }
                 console.log('Player musste 2 Karten ziehen.');
                 break;
             case "Plus 4":
-                for (var i = 0; i < 4; i++) {
-                    if (deckArray.length < 1) {
+                for (let i = 0; i < 4; i++) {
+                    if (DeckArray.length < 1) {
                         refillDeck();
                     }
-                    playerHandArray.push(deckArray[0]);
-                    deckArray.splice(0, 1);
+                    SpielerZugArray.push(DeckArray[0]);
+                    DeckArray.splice(0, 1);
                 }
                 console.log('Player musste 4 Karten ziehen.');
                 break;
@@ -441,13 +409,13 @@ function useSpecialProperty(tempCard, tempPlayersTurn) {
     }
     updateHTML();
 }
-//---------------------------------------- Drehe die Karten der Computer-Hand um ----------------------------------------//
+// Drehe die Karten der Computer-Hand um//
 function flipCompHand() {
-    compHandVisible = !compHandVisible;
+    CompKarteSichtbar = !CompKarteSichtbar;
     console.log('Die Karten des Computers wurden umgedreht.');
     updateHTML();
 }
-//---------------------------------------- Schalte das Overlay mit den Spielregeln an oder aus ----------------------------------------//
+// Schalte das Overlay mit den Spielregeln an oder aus //
 // Parameter= Zeigt ob das Overlay momentan sichtbar ist.
 function switchOverlay(visible) {
     if (visible)
