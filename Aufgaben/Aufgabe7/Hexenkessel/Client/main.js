@@ -46,6 +46,7 @@ var recipeStepTypes;
 var recipeSteps = [];
 //alle Effekte welche ausgewählt wurden
 var addedEffects = [];
+var loadedRecipes = [];
 //Alle notwendigen Elemente im Dokument suchen
 var ingredientsDropdown = document.getElementById("ingredientDropdown");
 var effectsDropdown = document.getElementById("effectsDropdown");
@@ -65,6 +66,9 @@ var addWaitButton = document.getElementById("addWaiting");
 var recipeName = document.getElementById("recipeName");
 var recipeDescription = document.getElementById("recipeDescription");
 var submitButton = document.getElementById("submit");
+var recipesDropdown = document.getElementById("availableRecipes");
+var searchRecipesButton = document.getElementById("searchRecipes");
+var loadRecipeButton = document.getElementById("loadRecipe");
 var ingredientsList = document.getElementById("ingredientsList");
 var effectsList = document.getElementById("effectsList");
 var stepsList = document.getElementById("stepsList");
@@ -264,6 +268,7 @@ function submitButtonHandler(_event) {
                     recipe["steps"] = recipeSteps;
                     recipe["description"] = poisonDescription.value;
                     query.append("recipe", JSON.stringify(recipe));
+                    query.append("type", "put");
                     return [4 /*yield*/, fetch("https://hexenkessel.herokuapp.com/?" + query.toString())];
                 case 1:
                     response = _a.sent();
@@ -277,3 +282,40 @@ function submitButtonHandler(_event) {
         });
     });
 }
+searchRecipesButton.addEventListener("click", function () {
+    return __awaiter(this, void 0, void 0, function () {
+        var response, data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fetch("https://hexenkessel.herokuapp.com/?type=get")];
+                case 1:
+                    response = _a.sent();
+                    return [4 /*yield*/, response.json()];
+                case 2:
+                    data = _a.sent();
+                    recipesDropdown.innerHTML = "";
+                    data.forEach(function (recipe) {
+                        var newOption = document.createElement("option");
+                        newOption.value = recipe._id;
+                        newOption.text = recipe.potion;
+                        recipesDropdown.add(newOption);
+                    });
+                    loadedRecipes = data;
+                    return [2 /*return*/];
+            }
+        });
+    });
+});
+loadRecipeButton.addEventListener("click", function () {
+    var selectedId = recipesDropdown.value;
+    var selectedrecipe = loadedRecipes.find(function (recipe) {
+        return recipe._id == selectedId;
+    });
+    addedEffects = selectedrecipe.effects;
+    recipeSteps = selectedrecipe.steps;
+    poisonName.value = selectedrecipe.potion;
+    poisonDescription.value = selectedrecipe.description;
+    displayEffects();
+    displayRecipeSteps();
+    displayIngredients();
+});
