@@ -24,7 +24,7 @@ console.log("Server starting on port:" + port);
 server.listen(port);
 server.addListener("request", handleRequest);
 
-function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void {
+async function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void {
     console.log("What's up?");
 
     _response.setHeader("content-type", "text/html; charset=utf-8");
@@ -33,12 +33,18 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
     if (_request.url) {
         let url: Url.UrlWithParsedQuery = Url.parse(_request.url, true);
 
+        if (url.query["type"] == "put") {
+       
         let recipe: any = JSON.parse(<string>url.query["recipe"]);
         recipes.insertOne(recipe);
 
         let jsonString: string = JSON.stringify(recipe);
         _response.write(jsonString);
+    } else if (url.query["type"] == "get") {
+        let AllRecipes = await recipes.find().toArray();
+        _response.write(JSON.stringify(AllRecipes));
     }
+}
 
     _response.end();
 }
