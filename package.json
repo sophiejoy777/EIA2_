@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node Aufgaben/Aufgabe6/Hexenkessel/Server/Server.js"
+    "start": "node Aufgaben/Aufgabe7/Hexenkessel/Server/Server.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,12 @@
   },
   "homepage": "https://github.com/sophiejoy777/EIA2_#readme",
   "devDependencies": {
+    "@types/mongodb": "^3.5.34",
     "@types/node": "^14.14.9",
     "ts-node": "^9.0.0",
     "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "mongodb": "^3.6.3"
   }
 }
